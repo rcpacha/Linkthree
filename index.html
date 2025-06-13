@@ -1,0 +1,199 @@
+
+ <!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Objetivo Performance - Links</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="manifest" href="manifest.json">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" xintegrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #111827; }
+        .link-button {
+            background-color: #1f2937; border: 1px solid #374151; color: #f3f4f6;
+            transition: all 0.2s ease-in-out; display: flex; align-items: center; justify-content: center;
+            width: 100%; padding: 1rem; font-weight: 600; border-radius: 0.5rem; text-align: center;
+        }
+        .link-button:hover { transform: scale(1.02); border-color: #2563eb; box-shadow: 0 0 15px rgba(37, 99, 235, 0.3); }
+        .link-button.placeholder { cursor: not-allowed; opacity: 0.7; }
+        .link-button.placeholder:hover { transform: none; border-color: #374151; box-shadow: none; }
+        .social-icon { color: #9ca3af; transition: all 0.2s ease-in-out; }
+        .social-icon:hover { color: #2563eb; transform: scale(1.1); }
+        #loader { border: 4px solid #374151; border-top: 4px solid #2563eb; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        #anamnese-content-view iframe { width: 100%; height: 100%; border: none; }
+    </style>
+</head>
+<body class="antialiased text-gray-300">
+
+    <!-- Visão Principal (Linktree) -->
+    <div id="linktree-view">
+        <div class="container mx-auto flex flex-col items-center justify-center min-h-screen p-4">
+            <main class="w-full max-w-lg mx-auto">
+                <header class="text-center mb-8">
+                    <img class="w-24 h-24 rounded-full mx-auto mb-4 border-2 border-blue-600 shadow-lg" src="https://placehold.co/100x100/1F2937/FFFFFF?text=RP" alt="Foto de Perfil de Ricardo Pachá">
+                    <h1 class="text-2xl font-bold text-gray-100">Ricardo Pachá</h1>
+                    <p class="text-md text-blue-400">@objetivoperformance</p>
+                    <p class="mt-4 text-sm text-gray-400 max-w-xs mx-auto">Estrategista de Performance e Autonomia. Transformando conhecimento em liberdade.</p>
+                </header>
+                <div id="links-container" class="space-y-4">
+                    <div id="loader" class="mx-auto"></div>
+                    <p id="loading-text" class="text-center text-gray-400">A carregar links...</p>
+                </div>
+                <footer class="text-center mt-12">
+                    <div class="flex items-center justify-center space-x-6">
+                        <a href="#" class="social-icon" aria-label="Instagram"><i class="fab fa-instagram fa-2x"></i></a>
+                        <a href="#" class="social-icon" aria-label="YouTube"><i class="fab fa-youtube fa-2x"></i></a>
+                        <a href="#" class="social-icon" aria-label="LinkedIn"><i class="fab fa-linkedin-in fa-2x"></i></a>
+                        <a href="#" class="social-icon" aria-label="GitHub"><i class="fab fa-github fa-2x"></i></a>
+                    </div>
+                </footer>
+            </main>
+        </div>
+    </div>
+
+    <!-- Container para a Visão de Detalhe (Anamnese) -->
+    <div id="detail-view" class="hidden fixed inset-0 bg-gray-900 z-20">
+        <button id="back-button" class="fixed top-4 left-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg shadow-lg flex items-center">
+            <i class="fa-solid fa-arrow-left mr-2"></i> Voltar
+        </button>
+        <div id="anamnese-content-view" class="w-full h-full pt-16">
+            <!-- O Iframe para renderizar a anamnese será inserido aqui -->
+        </div>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
+        import { getFirestore, collection, getDocs, doc, getDoc, query, where, orderBy } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCPVc6lrPUY6akc1egHtqnLmfnLv4CUhzc",
+            authDomain: "mapa-idealizado.firebaseapp.com",
+            projectId: "mapa-idealizado",
+            storageBucket: "mapa-idealizado.appspot.com",
+            messagingSenderId: "491058966116",
+            appId: "1:491058966116:web:1b91db28eb65dff5827971",
+            measurementId: "G-DCNFF1BDDW"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        const linktreeView = document.getElementById('linktree-view');
+        const detailView = document.getElementById('detail-view');
+        const anamneseContentView = document.getElementById('anamnese-content-view');
+        const linksContainer = document.getElementById('links-container');
+        const backButton = document.getElementById('back-button');
+
+        async function loadButtons() {
+            try {
+                // *** CORREÇÃO APLICADA AQUI ***
+                // A consulta foi simplificada para apenas ordenar por 'order'.
+                // O filtro de 'isVisible' será aplicado no lado do cliente para evitar a necessidade de um índice composto.
+                const q = query(collection(db, "objetivo_performance"), orderBy("order", "asc"));
+                const querySnapshot = await getDocs(q);
+
+                linksContainer.innerHTML = ''; 
+
+                // Filtra os documentos no lado do cliente.
+                const visibleDocs = querySnapshot.docs.filter(doc => doc.data().isVisible === true);
+
+                if (visibleDocs.length === 0) {
+                    linksContainer.innerHTML = '<p class="text-center text-gray-500">Nenhum link visível no momento.</p>';
+                    return;
+                }
+                
+                // Itera sobre a lista já filtrada.
+                visibleDocs.forEach((doc) => {
+                    const buttonData = doc.data();
+                    const button = document.createElement('a');
+                    button.href = '#';
+                    button.className = 'link-button';
+                    button.dataset.docId = doc.id;
+                    if(buttonData.tipo_acao === 'placeholder') button.classList.add('placeholder');
+                    button.innerHTML = `<i class="${buttonData.icone || 'fa-solid fa-link'} mr-3"></i> ${buttonData.nome || 'Link sem nome'}`;
+                    linksContainer.appendChild(button);
+                });
+            } catch (error) {
+                console.error("Erro ao carregar botões:", error);
+                linksContainer.innerHTML = '<p class="text-center text-red-500">Erro ao carregar links. Verifique o console.</p>';
+            }
+        }
+        
+        linksContainer.addEventListener('click', async (event) => {
+            const clickedButton = event.target.closest('.link-button');
+            if (!clickedButton || clickedButton.classList.contains('placeholder')) return;
+            event.preventDefault();
+            
+            const docId = clickedButton.dataset.docId;
+            const originalContent = clickedButton.innerHTML;
+            clickedButton.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-3"></i> A carregar...`;
+
+            try {
+                const docRef = doc(db, "objetivo_performance", docId);
+                const docSnap = await getDoc(docRef);
+                if (docSnap.exists()) {
+                    handleAction(docSnap.data(), docId);
+                } else {
+                    alert("Erro: Ação não encontrada.");
+                }
+            } catch (error) {
+                console.error("Erro ao executar ação:", error);
+                alert("Ocorreu um erro.");
+            } finally {
+                clickedButton.innerHTML = originalContent;
+            }
+        });
+
+        function handleAction(data, docId) {
+            const { tipo_acao, conteudo_acao } = data;
+            
+            if (tipo_acao === 'html') {
+                renderContentInIframe(conteudo_acao);
+                linktreeView.classList.add('hidden');
+                detailView.classList.remove('hidden');
+            } else if (tipo_acao === 'link') {
+                window.open(conteudo_acao, '_blank');
+            }
+        }
+
+        function renderContentInIframe(htmlContent) {
+            anamneseContentView.innerHTML = ''; // Limpa a view
+            const iframe = document.createElement('iframe');
+            anamneseContentView.appendChild(iframe);
+            iframe.srcdoc = htmlContent; // Atribui o HTML diretamente ao iframe
+        }
+
+        backButton.addEventListener('click', () => {
+            detailView.classList.add('hidden');
+            linktreeView.classList.remove('hidden');
+            anamneseContentView.innerHTML = ''; // Limpa o iframe para liberar memória
+        });
+
+        document.addEventListener('DOMContentLoaded', loadButtons);
+    </script>
+
+    <!-- **MODIFICATION**: Script to register the service worker for PWA functionality. Corrected path from './serviceworker.js' to '/Ritinha-PWA/serviceworker.js' -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          // The path should be relative to the root of the domain, including the repository name.
+          navigator.serviceWorker.register('/Ritinha-PWA/serviceworker.js')
+            .then(registration => {
+              console.log('Service Worker da Ritinha registrado com sucesso: ', registration.scope);
+            })
+            .catch(error => {
+              console.log('Falha no registro do Service Worker:', error);
+            });
+        });
+      }
+    </script>
+</body>
+</html>
