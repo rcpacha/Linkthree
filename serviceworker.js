@@ -1,5 +1,5 @@
 // Define um nome e uma versão para o nosso cache de arquivos
-const CACHE_NAME = 'ritinha-cache-v1';
+const CACHE_NAME = 'paineldecontrolecache';
 
 // Lista de arquivos essenciais para o funcionamento offline do app
 // IMPORTANTE: O nome do arquivo .html deve ser exatamente o mesmo do seu arquivo principal.

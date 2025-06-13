@@ -1,7 +1,7 @@
 {
-  "name": "Ritinha - Sua Parceira",
-  "short_name": "Ritinha",
-  "description": "Sua assistente pessoal para o dia a dia.",
+  "name": "Painel de Controle",
+  "short_name": "Painel de Controle",
+  "description": "Seu painel de controle",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#fef2f2",
