@@ -180,12 +180,12 @@
         document.addEventListener('DOMContentLoaded', loadButtons);
     </script>
 
-    <!-- **MODIFICATION**: Script to register the service worker for PWA functionality. Corrected path from './serviceworker.js' to '/Ritinha-PWA/serviceworker.js' -->
+    <!-- **MODIFICATION**: Script to register the service worker for PWA functionality. Corrected path from './serviceworker.js' to '/Linkthree/serviceworker.js' -->
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
           // The path should be relative to the root of the domain, including the repository name.
-          navigator.serviceWorker.register('/Ritinha-PWA/serviceworker.js')
+          navigator.serviceWorker.register('/Linkthree/serviceworker.js')
             .then(registration => {
               console.log('Service Worker da Ritinha registrado com sucesso: ', registration.scope);
             })
